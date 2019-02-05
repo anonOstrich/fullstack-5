@@ -26,8 +26,6 @@ const updateBlog = async  (updatedBlog) => {
 }
 
 const create = async (blog) => {
-
-  console.log("token:", token)
   const result = await axios.post(baseUrl, blog, {
     headers: {Authorization: token}
   })

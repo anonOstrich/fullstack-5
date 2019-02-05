@@ -20,6 +20,7 @@ const NoteForm = ({updateShownBlogs, updateNotification}) => {
       setAuthor('')
       setUrl('')
       updateShownBlogs(result)
+      console.log("Created blog", result)
       updateNotification(`a new blog ${result.title} by ${result.author} added`)
     } catch(exception){
       updateNotification('an error occured in creating the blog', true)
@@ -85,6 +86,7 @@ const App = () => {
     if(jsonUser){
       const loggedUser = JSON.parse(jsonUser)
       setUser(loggedUser)
+      console.log("Here comes!",loggedUser)
       blogService.setToken(loggedUser.token)
     }
   }, [])
@@ -92,7 +94,6 @@ const App = () => {
   const login = async (event) => {
     event.preventDefault()
     try{
-
     const createdUser = await loginService.sendLoginInfo(
       username, password
     )
@@ -152,7 +153,7 @@ const App = () => {
 
 
 
-  if(user === null){
+  if(!user){
     return(
     <div>
       <h2>Log in to application</h2>
@@ -175,7 +176,10 @@ const App = () => {
       </div>
       <Togglable buttonLabel="lisää blogi">
       <NoteForm  updateShownBlogs={
-        newBlog => {setBlogs(blogs.concat(newBlog))}
+        newBlog => {
+          newBlog.user = user
+          setBlogs(blogs.concat(newBlog))
+          }
       }
         updateNotification={(message, isError) => {
           setNotification(message)
@@ -186,7 +190,15 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={blogLiker(blog)} handleRemove={blogRemover(blog)}/>
+        <Blog key={blog.id}
+         blog={blog}
+          handleLike={blogLiker(blog)}
+          handleRemove={
+            blogRemover(blog)
+            }
+            currentUser = {user}
+
+           />
       )}
     </div>
   )
