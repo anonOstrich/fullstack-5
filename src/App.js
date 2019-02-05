@@ -66,10 +66,17 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
   const [error, setError] = useState(false)
+
+
+  const sortBlogs = (toBeSorted) =>  toBeSorted.slice().sort((blogA, blogB) => blogB.likes - blogA.likes)
+  
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    blogService.getAll().then(blogs => {
+      const sorted_blogs = sortBlogs(blogs)
+      return setBlogs( sorted_blogs )
+    }  
+    )
   }, [])
 
   // if login information in local storage, log the user in
@@ -121,14 +128,13 @@ const App = () => {
       url: blog.url
     })
 
-    console.log("TÄSSÄ", updatedBlog);
 
-
-    setBlogs(blogs.map(b => {
-     return b.id === updatedBlog.id ? 
-      updatedBlog : 
-      b
-    }))
+    const sortedBlogs = sortBlogs(blogs.map(b => {
+      return b.id === updatedBlog.id ? 
+       updatedBlog : 
+       b
+     }))
+     setBlogs(sortedBlogs)
   }
 
 
