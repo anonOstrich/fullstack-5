@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-const Blog = ({ blog, handleLike }) =>{
+const Blog = ({ blog, handleLike, handleRemove }) =>{
 
   const [verbose, setVerbose] = useState(false)
 
@@ -27,6 +27,7 @@ const Blog = ({ blog, handleLike }) =>{
       <a href={blog.url}>{blog.url}</a><br/>
       {blog.likes} likes <button onClick={handleLike}>like</button> <br/>
       added by {blog.hasOwnProperty('user') ? blog.user.name : 'unknown'} <br/>
+      <button onClick={handleRemove}>remove</button>
       </div>
     </div>
     </div>

@@ -13,6 +13,13 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
+const removeBlog = async (delBlog) => {
+  const result = await axios.delete(`${baseUrl}/${delBlog.id}`, {
+    headers: {Authorization: token}
+  })
+  return result
+}
+
 const updateBlog = async  (updatedBlog) => {
   const result = await axios.put(`${baseUrl}/${updatedBlog.id}`, updatedBlog)
   return result.data
@@ -26,4 +33,4 @@ const create = async (blog) => {
   })
   return result.data
 }
-export default { getAll, setToken, create, updateBlog }
+export default { getAll, setToken, create, updateBlog, removeBlog }

@@ -110,6 +110,18 @@ const App = () => {
     }
   }
 
+  const blogRemover = (blog) => async () => {
+    if(!window.confirm(`remove blog ${blog.title} by ${blog.author}`)){
+      return
+    }
+
+    const response = await blogService.removeBlog(blog)
+    if(Number(response.status) > 200 && Number(response.status) < 300){
+      console.log("Successfully deleted!")
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    }
+  }
+
   const logout = () => {
     window.localStorage.removeItem('loggedAppUser')
     setUser(null)
@@ -174,7 +186,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={blogLiker(blog)}/>
+        <Blog key={blog.id} blog={blog} handleLike={blogLiker(blog)} handleRemove={blogRemover(blog)}/>
       )}
     </div>
   )
