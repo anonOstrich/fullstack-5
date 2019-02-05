@@ -5,7 +5,7 @@ import loginService from './services/login'
 
 
 //noteform as a component of its own
-const NoteForm = ({updateShownBlogs}) => {
+const NoteForm = ({updateShownBlogs, updateNotification}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -19,8 +19,9 @@ const NoteForm = ({updateShownBlogs}) => {
       setAuthor('')
       setUrl('')
       updateShownBlogs(result)
+      updateNotification(`a new blog ${result.title} by ${result.author} added`)
     } catch(exception){
-      alert('jotain meni blogin luonnissa vikaan :(')
+      updateNotification('an error occured in creating the blog', true)
     }
 
   }
@@ -38,12 +39,33 @@ const NoteForm = ({updateShownBlogs}) => {
   )
 }
 
+
+const NotificationMessage = ({message, isError}) => {
+
+  const notificationStyle = {
+    color:isError ? 'red' : 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 5,
+    marginBottom: 5
+  }
+
+  return (
+    <div style={notificationStyle}>
+        <p>{message}</p>
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
+  const [notification, setNotification] = useState(null)
+  const [error, setError] = useState(false)
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -74,7 +96,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch(exception) {
-      alert('login failed!')
+      setNotification('wrong username or password')
+      setTimeout(() => {
+        setNotification(null)
+      }, 3000)
     }
   }
 
@@ -85,10 +110,13 @@ const App = () => {
 
 
 
+
+
   if(user === null){
     return(
     <div>
       <h2>Log in to application</h2>
+      {notification && <NotificationMessage message={notification} isError={error}/>}
       <form onSubmit={login}>
         käyttäjätunnus <input type="text"  value={username} onChange={event => {setUsername(event.target.value)}}/> <br />
         salasana <input type="password"  value={password} onChange={event => {setPassword(event.target.value)}}/>
@@ -100,18 +128,27 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      {notification && <NotificationMessage message={notification} isError={error}/>}
       <div>
         <p>{user.name} logged in</p>
         <button onClick={logout}>logout</button>
       </div>
       <NoteForm  updateShownBlogs={
         newBlog => {setBlogs(blogs.concat(newBlog))}
-      }/>
+      }
+        updateNotification={(message, isError) => {
+          setNotification(message)
+          setError(isError)
+          setTimeout(() => {setNotification(null)}, 3000)
+        }}
+      />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
     </div>
   )
+
+
 }
 
 export default App
