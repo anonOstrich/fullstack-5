@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
 
 
 //noteform as a component of its own
@@ -23,7 +24,6 @@ const NoteForm = ({updateShownBlogs, updateNotification}) => {
     } catch(exception){
       updateNotification('an error occured in creating the blog', true)
     }
-
   }
 
   return (
@@ -133,6 +133,7 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={logout}>logout</button>
       </div>
+      <Togglable buttonLabel="lisää blogi">
       <NoteForm  updateShownBlogs={
         newBlog => {setBlogs(blogs.concat(newBlog))}
       }
@@ -142,6 +143,8 @@ const App = () => {
           setTimeout(() => {setNotification(null)}, 3000)
         }}
       />
+      </Togglable>
+
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
