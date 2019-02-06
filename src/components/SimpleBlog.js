@@ -1,6 +1,6 @@
 import React from 'react' 
 
-const SimpleBlog = ({ blog, onClick }) => (  
+const SimpleBlog = ({ blog, onClick }) => (
   <div>
     <div className='basicBlogInfo'>
       {blog.title} {blog.author}

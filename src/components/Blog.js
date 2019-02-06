@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, handleLike, handleRemove , currentUser }) => {
+const Blog = ({ blog, handleLike, handleRemove }) => {
 
   const [verbose, setVerbose] = useState(false)
 
@@ -21,14 +21,14 @@ const Blog = ({ blog, handleLike, handleRemove , currentUser }) => {
 
   return (
     <div style={blogStyle}>
-      <div onClick={toggleVerbosity}>
+      <div onClick={toggleVerbosity} className='blogInfo'>
         {blog.title} {blog.author}
         <div>
-          <div style={showOnVerbose}>
+          <div style={showOnVerbose} className='extraInfo'>
             <a href={blog.url}>{blog.url}</a><br/>
             {blog.likes} likes <button onClick={handleLike}>like</button> <br/>
       added by  {blog.user ? blog.user.name : 'unknown'} <br/>
-            {(!blog.user ||  blog.user.username === currentUser.username) ?
+            {handleRemove ?
               <button onClick={handleRemove}>remove</button>
               : <></>
             }
@@ -39,9 +39,7 @@ const Blog = ({ blog, handleLike, handleRemove , currentUser }) => {
   )}
 
 Blog.propTypes = {
-
   handleLike: PropTypes.func.isRequired,
-  handleRemove: PropTypes.func.isRequired,
   blog: PropTypes.object.isRequired
 }
 

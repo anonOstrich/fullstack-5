@@ -86,7 +86,6 @@ const App = () => {
     if(jsonUser){
       const loggedUser = JSON.parse(jsonUser)
       setUser(loggedUser)
-      console.log('Here comes!',loggedUser)
       blogService.setToken(loggedUser.token)
     }
   }, [])
@@ -194,7 +193,9 @@ const App = () => {
           blog={blog}
           handleLike={blogLiker(blog)}
           handleRemove={
-            blogRemover(blog)
+            (!blog.user || user.username === blog.user.username) ?
+             blogRemover(blog) 
+             : null
           }
           currentUser = {user}
 
