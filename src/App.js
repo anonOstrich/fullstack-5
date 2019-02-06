@@ -6,7 +6,7 @@ import Togglable from './components/Togglable'
 
 
 //noteform as a component of its own
-const NoteForm = ({updateShownBlogs, updateNotification}) => {
+const NoteForm = ({ updateShownBlogs, updateNotification }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -15,12 +15,12 @@ const NoteForm = ({updateShownBlogs, updateNotification}) => {
   const createBlog = async event => {
     event.preventDefault()
     try{
-      const result = await blogService.create({title, author, url})
+      const result = await blogService.create({ title, author, url })
       setTitle('')
       setAuthor('')
       setUrl('')
       updateShownBlogs(result)
-      console.log("Created blog", result)
+      console.log('Created blog', result)
       updateNotification(`a new blog ${result.title} by ${result.author} added`)
     } catch(exception){
       updateNotification('an error occured in creating the blog', true)
@@ -41,7 +41,7 @@ const NoteForm = ({updateShownBlogs, updateNotification}) => {
 }
 
 
-const NotificationMessage = ({message, isError}) => {
+const NotificationMessage = ({ message, isError }) => {
 
   const notificationStyle = {
     color:isError ? 'red' : 'green',
@@ -55,7 +55,7 @@ const NotificationMessage = ({message, isError}) => {
 
   return (
     <div style={notificationStyle}>
-        <p>{message}</p>
+      <p>{message}</p>
     </div>
   )
 }
@@ -70,13 +70,13 @@ const App = () => {
 
 
   const sortBlogs = (toBeSorted) =>  toBeSorted.slice().sort((blogA, blogB) => blogB.likes - blogA.likes)
-  
+
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
       const sorted_blogs = sortBlogs(blogs)
       return setBlogs( sorted_blogs )
-    }  
+    }
     )
   }, [])
 
@@ -86,7 +86,7 @@ const App = () => {
     if(jsonUser){
       const loggedUser = JSON.parse(jsonUser)
       setUser(loggedUser)
-      console.log("Here comes!",loggedUser)
+      console.log('Here comes!',loggedUser)
       blogService.setToken(loggedUser.token)
     }
   }, [])
@@ -94,11 +94,11 @@ const App = () => {
   const login = async (event) => {
     event.preventDefault()
     try{
-    const createdUser = await loginService.sendLoginInfo(
-      username, password
-    )
+      const createdUser = await loginService.sendLoginInfo(
+        username, password
+      )
 
-      setUser(createdUser);
+      setUser(createdUser)
       window.localStorage.setItem('loggedAppUser', JSON.stringify(createdUser))
       blogService.setToken(createdUser.token)
       setUsername('')
@@ -118,7 +118,7 @@ const App = () => {
 
     const response = await blogService.removeBlog(blog)
     if(Number(response.status) > 200 && Number(response.status) < 300){
-      console.log("Successfully deleted!")
+      console.log('Successfully deleted!')
       setBlogs(blogs.filter(b => b.id !== blog.id))
     }
   }
@@ -143,11 +143,11 @@ const App = () => {
 
 
     const sortedBlogs = sortBlogs(blogs.map(b => {
-      return b.id === updatedBlog.id ? 
-       updatedBlog : 
-       b
-     }))
-     setBlogs(sortedBlogs)
+      return b.id === updatedBlog.id ?
+        updatedBlog :
+        b
+    }))
+    setBlogs(sortedBlogs)
   }
 
 
@@ -155,15 +155,15 @@ const App = () => {
 
   if(!user){
     return(
-    <div>
-      <h2>Log in to application</h2>
-      {notification && <NotificationMessage message={notification} isError={error}/>}
-      <form onSubmit={login}>
+      <div>
+        <h2>Log in to application</h2>
+        {notification && <NotificationMessage message={notification} isError={error}/>}
+        <form onSubmit={login}>
         käyttäjätunnus <input type="text"  value={username} onChange={event => {setUsername(event.target.value)}}/> <br />
         salasana <input type="password"  value={password} onChange={event => {setPassword(event.target.value)}}/>
-        <button type="submit">kirjaudu</button>
-      </form>
-    </div>)
+          <button type="submit">kirjaudu</button>
+        </form>
+      </div>)
   }
 
   return (
@@ -175,30 +175,30 @@ const App = () => {
         <button onClick={logout}>logout</button>
       </div>
       <Togglable buttonLabel="lisää blogi">
-      <NoteForm  updateShownBlogs={
-        newBlog => {
-          newBlog.user = user
-          setBlogs(blogs.concat(newBlog))
+        <NoteForm  updateShownBlogs={
+          newBlog => {
+            newBlog.user = user
+            setBlogs(blogs.concat(newBlog))
           }
-      }
+        }
         updateNotification={(message, isError) => {
           setNotification(message)
           setError(isError)
           setTimeout(() => {setNotification(null)}, 3000)
         }}
-      />
+        />
       </Togglable>
 
       {blogs.map(blog =>
         <Blog key={blog.id}
-         blog={blog}
+          blog={blog}
           handleLike={blogLiker(blog)}
           handleRemove={
             blogRemover(blog)
-            }
-            currentUser = {user}
+          }
+          currentUser = {user}
 
-           />
+        />
       )}
     </div>
   )
