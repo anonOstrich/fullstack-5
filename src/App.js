@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useField } from './hooks/index'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -26,6 +27,7 @@ const NoteForm = ({ updateShownBlogs, updateNotification }) => {
       updateNotification('an error occured in creating the blog', true)
     }
   }
+
 
   return (
     <div>
@@ -62,8 +64,6 @@ const NotificationMessage = ({ message, isError }) => {
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
   const [error, setError] = useState(false)
@@ -96,14 +96,12 @@ const App = () => {
     event.preventDefault()
     try{
       const createdUser = await loginService.sendLoginInfo(
-        username, password
+        usernameField.value, passwordField.value
       )
 
       setUser(createdUser)
       window.localStorage.setItem('loggedAppUser', JSON.stringify(createdUser))
       blogService.setToken(createdUser.token)
-      setUsername('')
-      setPassword('')
     } catch(exception) {
       setNotification('wrong username or password')
       setTimeout(() => {
@@ -151,8 +149,10 @@ const App = () => {
     setBlogs(sortedBlogs)
   }
 
+  
 
-
+  const usernameField = useField('text')
+  const passwordField = useField('password')
 
   if(!user){
     return(
@@ -160,8 +160,8 @@ const App = () => {
         <h2>Log in to application</h2>
         {notification && <NotificationMessage message={notification} isError={error}/>}
         <form onSubmit={login}>
-        käyttäjätunnus <input type="text"  value={username} onChange={event => {setUsername(event.target.value)}}/> <br />
-        salasana <input type="password"  value={password} onChange={event => {setPassword(event.target.value)}}/>
+        käyttäjätunnus <input {...usernameField}/> <br />
+        salasana <input {...passwordField}/>
           <button type="submit">kirjaudu</button>
         </form>
       </div>)
