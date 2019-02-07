@@ -73,7 +73,9 @@ const App = () => {
 
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
+    console.log(blogService)
+    const response = blogService.getAll()
+    response.then(blogs => {
       const sorted_blogs = sortBlogs(blogs)
       return setBlogs( sorted_blogs )
     }
