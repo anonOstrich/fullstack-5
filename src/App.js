@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useField } from './hooks/index'
+import { useField, excludeReset } from './hooks/index'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -8,20 +8,22 @@ import Togglable from './components/Togglable'
 
 //noteform as a component of its own
 const NoteForm = ({ updateShownBlogs, updateNotification }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const titleField = useField('text')
+  const authorField = useField('text')
+  const urlField = useField('text')
 
 
   const createBlog = async event => {
     event.preventDefault()
     try{
-      const result = await blogService.create({ title, author, url })
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      const result = await blogService.create({
+        title: titleField.value,
+         author: authorField.value,
+          url: urlField.value })
+      titleField.reset()
+      authorField.reset()
+      urlField.reset()
       updateShownBlogs(result)
-      console.log('Created blog', result)
       updateNotification(`a new blog ${result.title} by ${result.author} added`)
     } catch(exception){
       updateNotification('an error occured in creating the blog', true)
@@ -33,9 +35,9 @@ const NoteForm = ({ updateShownBlogs, updateNotification }) => {
     <div>
       <h2>Create new</h2>
       <form onSubmit={createBlog}>
-        title <input value={title} name='Title' onChange={event => {setTitle(event.target.value)}}/><br />
-        author <input value={author} name='Value' onChange={event => {setAuthor(event.target.value)}}/><br />
-        url <input value={url} name='Url' onChange={event => {setUrl(event.target.value)}}/><br />
+        title <input {...excludeReset(titleField)}/><br />
+        author <input { ...excludeReset(authorField) }/><br />
+        url <input {...excludeReset(urlField)}/><br />
         <button type="submit">create</button>
       </form>
     </div>
@@ -102,6 +104,7 @@ const App = () => {
       setUser(createdUser)
       window.localStorage.setItem('loggedAppUser', JSON.stringify(createdUser))
       blogService.setToken(createdUser.token)
+
     } catch(exception) {
       setNotification('wrong username or password')
       setTimeout(() => {
@@ -160,8 +163,8 @@ const App = () => {
         <h2>Log in to application</h2>
         {notification && <NotificationMessage message={notification} isError={error}/>}
         <form onSubmit={login}>
-        käyttäjätunnus <input {...usernameField}/> <br />
-        salasana <input {...passwordField}/>
+        käyttäjätunnus <input {...excludeReset(usernameField)}/> <br />
+        salasana <input {...excludeReset(passwordField)}/>
           <button type="submit">kirjaudu</button>
         </form>
       </div>)

@@ -7,11 +7,20 @@ export const useField = (type) => {
     setValue(event.target.value)
   }
 
+  const reset = () => {
+    setValue('')
+  }
+
   return {
     value,
     onChange,
-    type
+    type,
+    reset
   }
 }
 
-export const useAnotherHook = () => {}
+export const excludeReset = (fieldObject) => {
+  const { reset, ...rest } = fieldObject
+  return rest
+}
+
